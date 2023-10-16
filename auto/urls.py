@@ -23,9 +23,10 @@ app_name = "main"
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.main_page,name='home'),
+    path('car/<str:brand>/<str:model>/', views.detail_car, name='detail-car'),
     path('car/<str:brand>/',views.detail_page,name='brand-detail'),
     path('news/',views.news,name='news'),
-    path('search/<str:brand>/',views.search_car,name='search-car-with-brand'),
-    path('search/', views.search_car, name='search-car')
+    path('search/', views.search_car, name='search-car'),
+
 
 ]

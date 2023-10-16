@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from django.db.models import Count
-from django.shortcuts import render,get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from main.models import Cars
 
@@ -58,6 +58,7 @@ car_data = [
     ("Alfa Romeo", "Giulia", "Sedan", "276", "2.0", "8AT", "Petrol", "2021")
 ]
 
+
 # # save our cars
 # # adding our cars to db
 # # Словарь для хранения объектов Cars по бренду
@@ -101,11 +102,20 @@ def main_page(request):
 
     return render(request, 'main.html', {'unique_brands': unique_brands})
 
-def detail_page(request,brand:str):
-    cars = Cars.objects.filter(brand=brand)
 
+def detail_page(request, brand: str):
+    cars = Cars.objects.filter(brand=brand)
+    print('detail')
 
     return render(request, 'brand_detail.html', {'car': cars})
+
+
+def detail_car(request,brand, model):
+    models = Cars.objects.filter(brand=brand,model_car=model).first
+    print(models)
+
+
+    return render(request, 'detail_car.html', {'models': models})
 
 
 def search_car(request):
@@ -113,22 +123,18 @@ def search_car(request):
     if brand is not None:
         # Perform the regular brand-based search
         cars = Cars.objects.filter(brand__icontains=brand)
-        print('good_cars:',cars)
-        print('good_brand:',brand)
+        print('good_cars:', cars)
+        print('good_brand:', brand)
     else:
         # Handle the case when no brand is specified
         cars = Cars.objects.all()
-        print('bad',cars)
-        print('bad',brand)
 
     return render(request, 'brand_detail.html', {'car': cars, 'brand': brand})
-
 
 
 # news bar
 def news(request):
     return render(request, 'news.html')
-
 
 # search by mark auto
 
