@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>brand_detail</title>
+    <title>brand</title>
 </head>
 <body>
 
 <div>
-<h2>Информация о модели - {{ car.brand }} - </h2>
+<h2>Информация о модели - {{ car.0.brand }} - </h2>
 </div>
     <div>
         {% for car_item in car %}
-        <h3>{{ car_item.model_car }} - {{ car_item.type_car }} - {{ car_item.horse_power }} - {{ car_item.engine_capacity }} - {{ car_item.gearbox }} - {{ car_item.fuel_grade }} - {{ car_item.year_of_release }} </h3>
+            <h3><a href="{% url 'detail-car' car_item.brand car_item.model_car %}">{{ car_item.model_car }}</a> - {{ car_item.type_car }} - {{ car_item.horse_power }} - {{ car_item.engine_capacity }} - {{ car_item.gearbox }} - {{ car_item.fuel_grade }} - {{ car_item.year_of_release }} </h3>
     </div>
 {% endfor %}
 
