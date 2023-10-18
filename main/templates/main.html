@@ -45,7 +45,8 @@
    <ul>
   {% for brand_info in unique_brands %}
     <div>
-      <a href="{% url 'brand-detail' brand_info.brand %}">{{ brand_info.brand }}</a>
+      <h3>{{ brand_info.brand }}</h3>
+{#    <a href="{% url 'brand-detail' brand_info.brand %}"/>#}
     </div>
   {% endfor %}
 </ul>
