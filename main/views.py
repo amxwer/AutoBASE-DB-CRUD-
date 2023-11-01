@@ -5,6 +5,7 @@ from django.db.models import Count
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 
+from .models import Cars, Models
 from django.views import generic
 
 # my car list
@@ -98,45 +99,74 @@ car_data = [
 #     print(f"Invalid data format: {item}")
 
 
-
 class MainView(generic.TemplateView):
     template_name = 'main.html'
+    model = Cars
 
+    def get(self, request, *args, **kwargs):
+        return self.main_page()
 
-    # def get(self, request, *args, **kwargs):
-    #     return self.main_page()
-    # def main_page(self):
-    #
-    #     # Получаем уникальные бренды и их количество из базы данных
-    #     # unique_brands = Cars.objects.values('brand').annotate(brand_count=Count('brand')).distinct()
-    #
-    #     return  render(self.request,self.template_name, {'unique_brands': unique_brands})
+    def main_page(self):
+        # Получаем уникальные бренды и их количество из базы данных
+        unique_brands = Cars.objects.values('brand').annotate(brand_count=Count('brand')).distinct()
+
+        return render(self.request, self.template_name, {'unique_brands': unique_brands})
 
 
 class SearchView(generic.ListView):
-
+    model = Models
     template_name = 'brand_detail.html'
 
+    def get(self, request, *args, **kwargs):
+        return self.search_car()
 
-    # def search_car(self):
-    #     brand = request.GET.get('brand', '')
-    #     if brand is not None:
-    #         # Perform the regular brand-based search
-    #         # cars = Cars.objects.filter(brand__icontains=brand)
-    #
-    #         print('good_brand:', brand)
-    #     else:
-    #
+    def search_car(self):
+        brand = self.request.GET.get('brand', '')
+        unique_brands = Cars.objects.values('brand').annotate(brand_count=Count('brand')).distinct()
+        brand_names = unique_brands.values_list('brand', flat=True)
+        flag = False
+
+        if brand in brand_names:
+            flag = True
+            brands = Models.objects.filter(cars_id__brand__icontains=brand)
+            return render(self.request, self.template_name, {'flag': flag, 'models': brands, 'brand': brand})
+
+        else:
+            unique_brands = Cars.objects.values('brand').annotate(brand_count=Count('brand')).distinct()
+            return render(self.request, self.template_name, {'flag': flag, 'unique_brands': unique_brands})
 
 
-        # return render(self.request,self.template_name, {'car': cars, 'brand': brand})
+# Information about each car
+class DetailView(generic.DetailView):
+    model = Models
 
-# def main_page(request):
-#     # Получаем уникальные бренды и их количество из базы данных
-#     unique_brands = Cars.objects.values('brand').annotate(brand_count=Count('brand')).distinct()
-#
-#     return render(request, 'main.html', {'unique_brands': unique_brands})
-#
+    template_name = 'detail_car'
+
+    def get(self, request, *args, **kwargs):
+        return self.detail_car()
+
+    def detail_car(request, brand, model):
+        models = Cars.objects.filter(brand=brand, model_car=model).first
+        return render(request, 'detail_car.html', {'models': models})
+
+class DetailPage(generic.DetailView):
+    model = Models
+    template_name = 'brand_detail.html'
+    context_object_name = 'car'
+    slug_url_kwarg = 'brand'
+    slug_field = 'brand'
+
+    def get(self, request, *args, **kwargs):
+        return self.detail_page()
+
+    def detail_page(self):
+        flag = True
+        brand = self.kwargs['brand']
+        models = Models.objects.filter(cars_id__brand__icontains=brand)
+
+        return render(self.request, self.template_name, {'flag': flag, 'models': models,'brand':brand})
+
+
 #
 # def detail_page(request, brand: str):
 #     cars = Cars.objects.filter(brand=brand)
@@ -172,5 +202,3 @@ class SearchView(generic.ListView):
 #     return render(request, 'news.html')
 
 # search by mark auto
-
-# Create your views here.

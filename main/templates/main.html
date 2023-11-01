@@ -43,10 +43,10 @@
       <h1>Car Brands</h1>
   <ul>
    <ul>
-  {% for brand_info in unique_brands %}
+  {% for brand in unique_brands %}
     <div>
-      <h3>{{ brand_info.brand }}</h3>
-{#    <a href="{% url 'brand-detail' brand_info.brand %}"/>#}
+        <a href="{% url 'brand-detail' brand=brand.brand %}"><h3>{{ brand.brand }}</h3></a>
+
     </div>
   {% endfor %}
 </ul>

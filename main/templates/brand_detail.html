@@ -7,15 +7,29 @@
 <body>
 
 <div>
-<h2>Информация о модели - {{ car.0.brand }} - </h2>
+    {% if flag %}
+
+        <h2>Информация о моделях {{ brand }}  </h2>
+        <div>
+
+                {% for model in models %}
+
+                    <h3><a href="{% url 'detail-car' model.cars_id.brand model.model_car %}">{{ model.model_car }}</a> - {{ model.type_car }} - {{ model.horse_power }} - {{ model.engine_capacity }} - {{ model.gearbox }} - {{ model.fuel_grade }} - {{ model.year_release }}</h3>
+
+
+                {% endfor %}
+
+
+        </div>
+    {% else %}
+        <h2>Список всех брендов автомобилей</h2>
+        <ul>
+            {% for brand_info in unique_brands %}
+                <li><a href="{% url 'brand-detail' brand=brand_info.brand %}">{{ brand_info.brand }}</a></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 </div>
-    <div>
-        {% for car_item in car %}
-            <h3><a href="{% url 'detail-car' car_item.brand car_item.model_car %}">{{ car_item.model_car }}</a> - {{ car_item.type_car }} - {{ car_item.horse_power }} - {{ car_item.engine_capacity }} - {{ car_item.gearbox }} - {{ car_item.fuel_grade }} - {{ car_item.year_of_release }} </h3>
-    </div>
-{% endfor %}
-
-
 
 </body>
 </html>

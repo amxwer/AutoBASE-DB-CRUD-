@@ -15,7 +15,7 @@ class Models(models.Model):
     gearbox = models.CharField(max_length=6)
     year_release = models.IntegerField(max_length=5)
     type_car = models.CharField(max_length=15)
-    fuel_grade = models.IntegerField(max_length=15)
+    fuel_grade = models.CharField(max_length=10)
     cars_id = models.ForeignKey(Cars,on_delete=models.CASCADE)
 
     def __str__(self):
