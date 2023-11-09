@@ -4,13 +4,22 @@
     <meta charset="UTF-8">
     <title>detail_car {{ models.brand  }}: {{ models.model_car }}</title>
 </head>
+{% include 'header.html' %}
 <body>
-<h2>Информация о модели - {{ models.brand  }}: {{ models.model_car }}   </h2>
+<h2>Информация о модели - {{ brand  }}: {{ model }}   </h2>
+
+{% for model in models  %}
+
 
    <div>
-       <h3>{{ models.model_car }} - {{ models.type_car }} - {{ models.horse_power }} - {{ models.engine_capacity }} - {{ models.gearbox }} - {{ models.fuel_grade }} - {{ models.year_of_release }}</h3>
+       <h3>{{ model.model_car }} - {{ model.type_car }} - {{ model.horse_power }} - {{ model.engine_capacity }} - {{ model.gearbox }} - {{ model.fuel_grade }} - {{ model.year_of_release }}</h3>
    </div>
-
+    <img class="card-img-top"
+                                 src="{{ model.image_model.url }}"
+                                 alt="Not available image">
+{% endfor %}
 
 </body>
+
+{% include 'footer.html' %}
 </html>

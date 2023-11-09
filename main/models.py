@@ -10,6 +10,8 @@ class Cars(models.Model):
 
 class Models(models.Model):
     model_car = models.CharField(max_length=15)
+    image_model = models.ImageField(upload_to='models_images', blank=True)
+
     horse_power = models.IntegerField(max_length=1000)
     engine_capacity = models.FloatField(max_length=4)
     gearbox = models.CharField(max_length=6)

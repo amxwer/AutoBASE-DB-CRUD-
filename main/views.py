@@ -62,41 +62,39 @@ car_data = [
 ]
 
 
-# # save our cars
-# # adding our cars to db
-# # Словарь для хранения объектов Cars по бренду
-# cars_by_brand = {}
+# adding our cars to database
 #
 # # Итерация по car_data
-# for item in car_data:
-#     brand = item[0]
-#     model_car = item[1]
-#     key = (brand, model_car)  # Используем кортеж (бренд, модель) в качестве ключа
+# def addingOurCars():
+#     for item in car_data:
+#         brand = item[0]
+#         model_car = item[1]
+#         key = (brand, model_car)  # Используем кортеж (бренд, модель) в качестве ключа
 #
-#     # Если уже есть объект Cars с этим брендом и моделью
-#     if key in cars_by_brand:
-#         car_instance = cars_by_brand[key]
+#         # Если уже есть объект Cars с этим брендом и моделью
+#         if key in cars_by_brand:
+#             car_instance = cars_by_brand[key]
+#         else:
+#             # Если нет, создаем новый объект Cars
+#             car_instance = Cars(
+#                 brand=brand,
+#                 model_car=model_car,
+#                 type_car=item[2],  # Добавляем тип автомобиля
+#                 horse_power=int(item[3]),
+#                 engine_capacity=float(item[4]),
+#                 gearbox=item[5],
+#                 fuel_grade=item[6],
+#                 year_of_release=item[7]
+#             )
+#             cars_by_brand[key] = car_instance  # Сохраняем объект Cars в словаре
+#
+#         # Можно добавить другие действия с объектом Cars, если необходимо
+#
+#         # Сохраняем объект Cars
+#         car_instance.save()
+#         print(f'Car saved: {item}')
 #     else:
-#         # Если нет, создаем новый объект Cars
-#         car_instance = Cars(
-#             brand=brand,
-#             model_car=model_car,
-#             type_car=item[2],  # Добавляем тип автомобиля
-#             horse_power=int(item[3]),
-#             engine_capacity=float(item[4]),
-#             gearbox=item[5],
-#             fuel_grade=item[6],
-#             year_of_release=item[7]
-#         )
-#         cars_by_brand[key] = car_instance  # Сохраняем объект Cars в словаре
-#
-#     # Можно добавить другие действия с объектом Cars, если необходимо
-#
-#     # Сохраняем объект Cars
-#     car_instance.save()
-#     print(f'Car saved: {item}')
-# else:
-#     print(f"Invalid data format: {item}")
+#         print(f"Invalid data format: {item}")
 
 
 class MainView(generic.TemplateView):
@@ -139,15 +137,25 @@ class SearchView(generic.ListView):
 # Information about each car
 class DetailView(generic.DetailView):
     model = Models
-
     template_name = 'detail_car'
+    slug_url_kwarg = 'brand'
+    slug_field = 'brand'
+    slug_url_kwarg1 = 'model'
+    slug_field1 = 'model'
 
-    def get(self, request, *args, **kwargs):
+    def get(self, *args, **kwargs):
         return self.detail_car()
 
-    def detail_car(request, brand, model):
-        models = Cars.objects.filter(brand=brand, model_car=model).first
-        return render(request, 'detail_car.html', {'models': models})
+    def detail_car(self):
+        brand = self.kwargs['brand']
+        model = self.kwargs['model']
+
+        models = Models.objects.filter(cars_id__brand__icontains=brand)
+
+        print(models,'---')
+        print(model,'model')
+
+        return render(self.request, 'detail_car.html', {'models': models,'brand':brand,'model':model})
 
 class DetailPage(generic.DetailView):
     model = Models
@@ -162,43 +170,14 @@ class DetailPage(generic.DetailView):
     def detail_page(self):
         flag = True
         brand = self.kwargs['brand']
-        models = Models.objects.filter(cars_id__brand__icontains=brand)
 
+        models = Models.objects.filter(cars_id__brand__icontains=brand)
+        print(models,'---')
         return render(self.request, self.template_name, {'flag': flag, 'models': models,'brand':brand})
 
 
-#
-# def detail_page(request, brand: str):
-#     cars = Cars.objects.filter(brand=brand)
-#     print('detail')
-#
-#     return render(request, 'brand_detail.html', {'car': cars})
-#
-#
-# def detail_car(request,brand, model):
-#     models = Cars.objects.filter(brand=brand,model_car=model).first
-#     print(models)
-#
-#
-#     return render(request, 'detail_car.html', {'models': models})
-#
-#
-# def search_car(request):
-#     brand = request.GET.get('brand', '')
-#     if brand is not None:
-#         # Perform the regular brand-based search
-#         cars = Cars.objects.filter(brand__icontains=brand)
-#         print('good_cars:', cars)
-#         print('good_brand:', brand)
-#     else:
-#         # Handle the case when no brand is specified
-#         cars = Cars.objects.all()
-#
-#     return render(request, 'brand_detail.html', {'car': cars, 'brand': brand})
 
 #
 # # news bar
 # def news(request):
 #     return render(request, 'news.html')
-
-# search by mark auto
